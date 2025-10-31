@@ -1,0 +1,31 @@
+[package]
+name = "urvic-backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+actix-cors = "0.7"
+actix-web = "4.4"
+actix-files = "=0.6.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.13"
+dotenv = "0.15"
+jsonwebtoken = "9.3.0"
+reqwest = { version = "0.12.9", features = ["json"] }
+anyhow = "1.0.92"
+async-trait = "0.1.83"
+uuid = { version = "1", features = ["serde", "v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+validator = { version = "0.19", features = ["derive"] }
+env_logger = "0.9" 
+log = "0.4"
+futures = "0.3.31"
+actix-service = "2.0.2"
+thiserror = "1.0"
+tokio = { version = "1.43.0", features = ["full"] }
+diesel = { version = "2.0", features = ["mysql", "r2d2", "chrono", "uuid"] }
+chrono-tz = "0.10.1"
+utoipa = "5.3.1"
+utoipa-swagger-ui = { version = "9.0.0", features = ["actix-web","reqwest"] }
+

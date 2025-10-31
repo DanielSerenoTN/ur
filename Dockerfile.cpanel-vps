@@ -1,0 +1,47 @@
+# Dockerfile optimizado para VPS con cPanel/WHM
+# Stage 1: Build Frontend
+FROM node:18-alpine as frontend-builder
+
+WORKDIR /app/frontend
+COPY urvic-front/package*.json ./
+RUN npm ci
+COPY urvic-front/ ./
+RUN npm run build
+
+# Stage 2: Build Backend
+FROM rust:latest as backend-builder
+
+WORKDIR /app
+COPY Cargo.toml Cargo.lock ./
+COPY src/ ./src/
+RUN cargo build --release
+
+# Stage 3: Runtime (más ligero para VPS)
+FROM ubuntu:22.04
+
+# Instalar dependencias mínimas
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    libpq5 \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copiar archivos compilados
+COPY --from=backend-builder /app/target/release/urvic-backend ./
+COPY --from=frontend-builder /app/frontend/dist ./static
+
+# Copiar configuración
+COPY migrations ./migrations
+COPY diesel.toml ./
+
+# Variables de entorno para cPanel
+ENV APP_PORT=3000
+ENV RUST_LOG=info
+
+# Puerto para cPanel/WHM
+EXPOSE 3000
+
+# Comando de inicio
+CMD ["./urvic-backend"]
