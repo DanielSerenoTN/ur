@@ -22,12 +22,15 @@ jobs:
       with:
         toolchain: stable
         override: true
-    
-    - name: Build
-      run: cargo build --release
-    
-    - name: Upload binary
+
+    - name: Install CentOS 7 compatible target
+      run: rustup target add x86_64-unknown-linux-gnu
+
+    - name: Build for CentOS 7
+      run: cargo build --release --target x86_64-unknown-linux-gnu
+
+    - name: Upload CentOS 7 binary
       uses: actions/upload-artifact@v3
       with:
         name: urvic-backend-centos7
-        path: target/release/urvic-backend
+        path: target/x86_64-unknown-linux-gnu/release/urvic-backend
